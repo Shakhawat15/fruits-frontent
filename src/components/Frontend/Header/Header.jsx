@@ -1,13 +1,37 @@
 import { NavLink } from "react-router-dom";
-import { FaBars, FaChevronDown, FaLeaf, FaShoppingCart, FaTimes } from "react-icons/fa";
-import { useState } from "react";
+import {
+  FaBars,
+  FaChevronDown,
+  FaLeaf,
+  FaShoppingCart,
+  FaTimes,
+  FaUserCircle,
+} from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
+import { getToken } from "../../../helper/SessionHelper";
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef(null);
 
-  const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => setIsLoggedIn(false);
+  const handleLogout = () => {
+    setProfileMenuOpen(false);
+    // Clear Token Logic Here (Example)
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -56,40 +80,36 @@ export default function Header() {
               Become a Seller
             </NavLink>
 
-            {isLoggedIn ? (
-              <div className="relative group">
-                <button className="flex items-center text-gray-700 hover:text-green-600 transition">
-                  <span>Profile</span>
+            {getToken() ? (
+              <div className="relative" ref={profileMenuRef}>
+                <button
+                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                  className="flex items-center text-gray-700 hover:text-green-600 transition"
+                >
+                  <FaUserCircle className="text-2xl" />
                   <FaChevronDown className="ml-1 text-xs" />
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden group-hover:block">
-                  <NavLink
-                    to="/dashboard"
-                    className={({ isActive }) =>
-                      `block px-4 py-2 ${
-                        isActive ? "bg-gray-100 text-green-600" : "text-gray-700"
-                      } hover:bg-gray-100`
-                    }
-                  >
-                    Dashboard
-                  </NavLink>
-                  <NavLink
-                    to="/account-settings"
-                    className={({ isActive }) =>
-                      `block px-4 py-2 ${
-                        isActive ? "bg-gray-100 text-green-600" : "text-gray-700"
-                      } hover:bg-gray-100`
-                    }
-                  >
-                    Account Settings
-                  </NavLink>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </div>
+                {profileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <NavLink
+                      to="/dashboard"
+                      onClick={() => setProfileMenuOpen(false)}
+                      className={({ isActive }) =>
+                        `block px-4 py-2 ${
+                          isActive ? "bg-gray-100 text-green-600" : "text-gray-700"
+                        } hover:bg-gray-100`
+                      }
+                    >
+                      Dashboard
+                    </NavLink>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <>
@@ -182,7 +202,7 @@ export default function Header() {
             >
               Become a Seller
             </NavLink>
-            {isLoggedIn ? (
+            {getToken() ? (
               <>
                 <NavLink
                   to="/dashboard"
@@ -194,17 +214,6 @@ export default function Header() {
                   }
                 >
                   Dashboard
-                </NavLink>
-                <NavLink
-                  to="/account-settings"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `block ${
-                      isActive ? "text-green-600 font-semibold" : "text-gray-700"
-                    }`
-                  }
-                >
-                  Account Settings
                 </NavLink>
                 <button
                   onClick={() => {

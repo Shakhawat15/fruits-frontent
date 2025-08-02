@@ -40,7 +40,7 @@ const Header = ({ toggleSidebar }) => {
         </Button>
         {!isMenuOpen && (
           <Typography color="gray" variant="h6">
-            EMAP Bangladesh
+            {user?.name || "Admin"}
           </Typography>
         )}
       </div>

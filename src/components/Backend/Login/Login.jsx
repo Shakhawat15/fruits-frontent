@@ -26,13 +26,11 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const result = await LoginRequest(email, password);
-      setLoading(false);
+      const result = await LoginRequest(email, password, setLoading);
       if (result) {
         window.location.href = "/dashboard"; // Redirect to dashboard on success
       }
     } catch (error) {
-      setLoading(false);
       ErrorToast("Login failed. Please check your credentials.");
     }
   };

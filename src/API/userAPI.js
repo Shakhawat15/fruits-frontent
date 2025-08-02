@@ -9,6 +9,9 @@ export const LoginRequest = async (email, password, setLoading) => {
   try {
     setLoading(true);
     const response = await axios.post(URL, PostBody);
+    console.log('====================================');
+    console.log("Login Response:", response);
+    console.log('====================================');
     // console.log("====================================");
     // console.log(response.status);
     // console.log(response.data);
@@ -22,6 +25,9 @@ export const LoginRequest = async (email, password, setLoading) => {
     }
   } catch (error) {
     setLoading(false);
+    console.error('====================================');
+    console.error("Login Error:", error);
+    console.error('====================================');
     ErrorToast(error.response.data.message);
   }
 };
