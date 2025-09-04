@@ -35,6 +35,7 @@ const TABLE_HEAD = [
   "Phone",
   "Email",
   "Role",
+  "Password",
   "Status",
   "Action",
 ];
@@ -199,6 +200,7 @@ export default function UserList() {
                         avatar,
                         mobile,
                         email,
+                        passwordtext,
                         status,
                         _id,
                         role_id,
@@ -271,6 +273,15 @@ export default function UserList() {
                               className="font-normal"
                             >
                               {role_id?.name || "N/A"}
+                            </Typography>
+                          </td>
+                          <td className={classes}>
+                            <Typography
+                              variant="small"
+                              color="gray"
+                              className="font-normal"
+                            >
+                              {passwordtext || "N/A"}
                             </Typography>
                           </td>
                           <td className={classes}>
