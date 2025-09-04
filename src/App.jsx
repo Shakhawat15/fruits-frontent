@@ -12,6 +12,8 @@ import Dashboard from "./pages/Backend/Dashboard/DashboardPage";
 import LoginPage from "./pages/Backend/Login/LoginPage";
 import UserList from "./pages/Backend/User/UserPage";
 import UserRoleList from "./pages/Backend/UserRole/UserRolePage";
+import ProductTypePage from "./pages/Backend/ProductType/ProductTypePage";
+import SellerPage from "./pages/Backend/Seller/SellerPage";
 
 // Import Frontend Pages
 import BecomeSellerPage from "./pages/Frontend/BecomeSeller/BecomeSellerPage";
@@ -35,6 +37,8 @@ function App() {
             <Route exact path="/dashboard" element={<Dashboard />} />
             <Route path="/users" element={<UserList />} />
             <Route path="/user-roles" element={<UserRoleList />} />
+            <Route path="/product-types" element={<ProductTypePage />} />
+            <Route path="/seller-list" element={<SellerPage />} />
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
           <ToastContainer />

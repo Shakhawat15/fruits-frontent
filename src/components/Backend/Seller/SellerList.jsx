@@ -5,7 +5,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
-  Avatar,
   Button,
   Card,
   CardBody,
@@ -24,92 +23,66 @@ import { DeleteAlert } from "../../../helper/DeleteAlert";
 import { ErrorToast, SuccessToast } from "../../../helper/FormHelper";
 import LazyLoader from "../BackendMasterLayout/LazyLoader";
 import Loader from "../BackendMasterLayout/Loader";
-import AddUser from "./AddUser";
-
-// Define the default image URL
-// const DEFAULT_IMAGE_URL = "https://via.placeholder.com/150?text=No+Image";
+import AddSeller from "./AddSeller";
 
 const TABLE_HEAD = [
   "S.No",
-  "User",
-  "Phone",
+  "Business Name",
+  "Owner Name",
   "Email",
-  "Role",
+  "Phone",
   "Status",
+  "Create Date",
   "Action",
 ];
 
-export default function UserList() {
+export default function SellerList() {
   const [openModal, setOpenModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [users, setUsers] = useState([]);
+  const [selectedSeller, setSelectedSeller] = useState(null);
+  const [sellers, setSellers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(7);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
 
   useEffect(() => {
-    fetchUsers();
+    fetchSellers();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchSellers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${baseURL}/users/all`, AxiosHeader);
-      setUsers(response.data.data);
+      const response = await axios.get(`${baseURL}/sellers/all`, AxiosHeader);
+      setSellers(response.data.data);
     } catch (error) {
-      ErrorToast("Failed to fetch users");
+      ErrorToast(error.response?.data?.message || "An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenModal = (user = null) => {
-    setSelectedUser(user);
+  const handleOpenModal = (seller = null) => {
+    setSelectedSeller(seller);
     setOpenModal(true);
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    setSelectedUser(null);
-    fetchUsers();
+    setSelectedSeller(null);
+    fetchSellers();
   };
 
-  const handleEditUser = (user) => {
-    handleOpenModal(user);
+  const handleEditSeller = (seller) => {
+    handleOpenModal(seller);
   };
 
-  const handleDeleteUser = async (id) => {
-    const isDeleted = await DeleteAlert(id, "users/delete");
+  const handleDeleteSeller = async (id) => {
+    const isDeleted = await DeleteAlert(id, "sellers/delete");
     if (isDeleted) {
-      setUsers(users.filter((user) => user._id !== id));
+      setSellers(sellers.filter((seller) => seller._id !== id));
     }
   };
 
-  const handleStatusToggle = async (userId, currentStatus) => {
-    try {
-      const newStatus = currentStatus === 1 ? 0 : 1;
-      const response = await axios.patch(
-        `${baseURL}/users/status/${userId}`,
-        { status: newStatus },
-        AxiosHeader
-      );
-      if (response.data.success) {
-        // Update the status locally
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user._id === userId ? { ...user, status: newStatus } : user
-          )
-        );
-        SuccessToast("User status updated successfully");
-      } else {
-        ErrorToast("Failed to update status");
-      }
-    } catch (error) {
-      ErrorToast("Failed to update status");
-    }
-  };
-
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const totalPages = Math.ceil(sellers.length / itemsPerPage);
   const handlePageChange = (direction) => {
     if (direction === "next" && currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -118,10 +91,34 @@ export default function UserList() {
     }
   };
 
-  const currentTableData = users.slice(
+  const currentTableData = sellers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const handleStatusToggle = async (userId, currentStatus) => {
+    try {
+      const newStatus = !currentStatus; // toggle boolean
+      const response = await axios.patch(
+        `${baseURL}/sellers/status/${userId}`,
+        { is_active: newStatus }, // send boolean
+        AxiosHeader
+      );
+
+      if (response.data.success) {
+        setSellers((prevSellers) =>
+          prevSellers.map((seller) =>
+            seller._id === userId ? { ...seller, is_active: newStatus } : seller
+          )
+        );
+        SuccessToast("Seller status updated successfully");
+      } else {
+        ErrorToast("Failed to update status");
+      }
+    } catch (error) {
+      ErrorToast("Failed to update status");
+    }
+  };
 
   return (
     <>
@@ -138,10 +135,10 @@ export default function UserList() {
                 color="blue-gray"
                 className="font-semibold"
               >
-                User List
+                Seller List
               </Typography>
               <Typography color="gray" className="mt-1 font-normal">
-                See information about all users
+                See information about all sellers
               </Typography>
             </div>
             <div className="flex flex-col lg:flex-row items-center gap-4">
@@ -156,7 +153,7 @@ export default function UserList() {
                 className="flex items-center gap-3 bg-[#FFA500] hover:bg-[#FF8C00] text-white"
                 size="sm"
               >
-                <PlusIcon strokeWidth={2} className="h-4 w-4" /> Add User
+                <PlusIcon strokeWidth={2} className="h-4 w-4" /> Add Seller
               </Button>
             </div>
           </div>
@@ -195,13 +192,14 @@ export default function UserList() {
                   {currentTableData.map(
                     (
                       {
-                        full_name,
-                        avatar,
-                        mobile,
+                        business_name,
+                        first_name,
+                        last_name,
                         email,
-                        status,
+                        phone,
+                        is_active,
+                        createdAt,
                         _id,
-                        role_id,
                       },
                       index
                     ) => {
@@ -222,29 +220,13 @@ export default function UserList() {
                             </Typography>
                           </td>
                           <td className={classes}>
-                            <div className="flex items-center gap-3">
-                              <Avatar
-                                src={avatar}
-                                alt={`${full_name}`}
-                                size="sm"
-                              />
-                              <div className="flex flex-col">
-                                <Typography
-                                  variant="small"
-                                  color="gray"
-                                  className="font-normal"
-                                >
-                                  {`${full_name}`}
-                                </Typography>
-                                <Typography
-                                  variant="small"
-                                  color="gray"
-                                  className="font-normal opacity-70"
-                                >
-                                  {email}
-                                </Typography>
-                              </div>
-                            </div>
+                            <Typography
+                              variant="small"
+                              color="gray"
+                              className="font-normal"
+                            >
+                              {business_name}
+                            </Typography>
                           </td>
                           <td className={classes}>
                             <Typography
@@ -252,7 +234,7 @@ export default function UserList() {
                               color="gray"
                               className="font-normal"
                             >
-                              {mobile}
+                              {first_name} {last_name}
                             </Typography>
                           </td>
                           <td className={classes}>
@@ -270,35 +252,41 @@ export default function UserList() {
                               color="gray"
                               className="font-normal"
                             >
-                              {role_id?.name || "N/A"}
+                              {phone}
                             </Typography>
                           </td>
                           <td className={classes}>
-                            <div className="w-max">
-                              <Chip
-                                variant="ghost"
-                                size="sm"
-                                value={status === 1 ? "Active" : "Inactive"}
-                                color={status === 1 ? "green" : "blue-gray"}
-                                onClick={() => handleStatusToggle(_id, status)}
-                                className="cursor-pointer"
-                              />
-                            </div>
+                            <Chip
+                              variant="ghost"
+                              size="sm"
+                              className="cursor-pointer"
+                              onClick={() => handleStatusToggle(_id, is_active)} // pass boolean
+                              value={is_active ? "Active" : "Inactive"}
+                              color={is_active ? "green" : "blue-gray"}
+                            />
                           </td>
-
+                          <td className={classes}>
+                            <Typography
+                              variant="small"
+                              color="gray"
+                              className="font-normal"
+                            >
+                              {new Date(createdAt).toLocaleDateString()}
+                            </Typography>
+                          </td>
                           <td className={classes}>
                             <div className="flex gap-2">
-                              <Tooltip content="Edit User">
+                              <Tooltip content="Edit Seller">
                                 <IconButton
                                   onClick={() =>
-                                    handleEditUser({
+                                    handleEditSeller({
                                       _id,
-                                      full_name,
-                                      avatar,
-                                      mobile,
+                                      business_name,
+                                      first_name,
+                                      last_name,
                                       email,
-                                      status,
-                                      role_id: role_id?._id,
+                                      phone,
+                                      is_active,
                                     })
                                   }
                                   variant="text"
@@ -307,9 +295,9 @@ export default function UserList() {
                                   <PencilIcon className="h-5 w-5" />
                                 </IconButton>
                               </Tooltip>
-                              <Tooltip content="Delete User">
+                              <Tooltip content="Delete Seller">
                                 <IconButton
-                                  onClick={() => handleDeleteUser(_id)}
+                                  onClick={() => handleDeleteSeller(_id)}
                                   variant="text"
                                   color="red"
                                 >
@@ -353,15 +341,14 @@ export default function UserList() {
           </div>
         </CardFooter>
       </Card>
-      <Suspense fallback={<LazyLoader />}>
-        {openModal && (
-          <AddUser
-            open={openModal}
+      {openModal && (
+        <Suspense fallback={<LazyLoader />}>
+          <AddSeller
             onCancel={handleCloseModal}
-            existingUser={selectedUser}
+            existingSeller={selectedSeller}
           />
-        )}
-      </Suspense>
+        </Suspense>
+      )}
     </>
   );
 }

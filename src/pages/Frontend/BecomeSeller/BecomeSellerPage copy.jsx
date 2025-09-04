@@ -1,54 +1,28 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaCheck, FaCloudUploadAlt } from "react-icons/fa";
 import { FiArrowLeft } from "react-icons/fi";
-import { ErrorToast } from "../../../helper/FormHelper";
-import { AxiosHeader, baseURL } from "../../../API/config";
-import axios from "axios";
 
 const BecomeSellerPage = () => {
   const [formData, setFormData] = useState({
-    business_name: "",
-    business_type: "",
-    first_name: "",
-    last_name: "",
+    businessName: "",
+    businessType: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
-    business_address: "",
-    types_of_fruits: [],
+    businessAddress: "",
+    yearsInBusiness: "",
+    fruitTypes: [],
     certifications: [],
-    business_description: "",
-    documents_file: "",
-    user_id: "", // Should be filled from logged-in user
-    is_active: false,
+    businessDesc: "",
+    termsAgreed: false,
   });
 
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [productTypes, setProductTypes] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  const fetchProductTypes = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `${baseURL}/product-types/all`,
-        AxiosHeader
-      );
-      setProductTypes(response.data.data); // assuming API returns array like [{_id, name}, ...]
-    } catch (error) {
-      ErrorToast(error.response?.data?.message || "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProductTypes();
-  }, []);
-
-  // Generic input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -57,7 +31,6 @@ const BecomeSellerPage = () => {
     }));
   };
 
-  // For multiple select (fruits)
   const handleMultiSelect = (e) => {
     const { name, options } = e.target;
     const selected = [];
@@ -72,7 +45,6 @@ const BecomeSellerPage = () => {
     }));
   };
 
-  // For certifications checkboxes
   const handleCheckboxChange = (e) => {
     const { name, checked, value } = e.target;
     setFormData((prev) => {
@@ -91,17 +63,8 @@ const BecomeSellerPage = () => {
     });
   };
 
-  // Handle file upload
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setSelectedFiles(files);
-
-    if (files.length > 0) {
-      setFormData((prev) => ({
-        ...prev,
-        documents_file: files[0].name, // Save only first file name
-      }));
-    }
+    setSelectedFiles([...e.target.files]);
   };
 
   const nextStep = () => {
@@ -114,71 +77,18 @@ const BecomeSellerPage = () => {
     window.scrollTo(0, 0);
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   setIsSubmitting(true);
-
-  //   // TODO: Replace with real API call
-  //   setTimeout(() => {
-  //     console.log("Form submitted:", formData);
-  //     setIsSubmitting(false);
-  //     setSubmitSuccess(true);
-  //   }, 2000);
-  // };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      const formPayload = new FormData();
+    // Simulate API call
+    setTimeout(() => {
       console.log("Form submitted:", formData);
-      // Append text fields
-      formPayload.append("business_name", formData.business_name);
-      formPayload.append("business_type", formData.business_type);
-      formPayload.append("first_name", formData.first_name);
-      formPayload.append("last_name", formData.last_name);
-      formPayload.append("email", formData.email);
-      formPayload.append("phone", formData.phone);
-      formPayload.append("business_address", formData.business_address);
-      formPayload.append("business_description", formData.business_description);
-      formPayload.append("user_id", formData.user_id || ""); // Add logged-in user ID if available
-
-      // Append array fields
-      formData.types_of_fruits.forEach((fruit) =>
-        formPayload.append("types_of_fruits[]", fruit)
-      );
-      formData.certifications.forEach((cert) =>
-        formPayload.append("certifications[]", cert)
-      );
-
-      // Append files
-      selectedFiles.forEach((file) => {
-        formPayload.append("documents", file);
-      });
-
-      const response = await axios.post(
-        `${baseURL}/sellers/create`,
-        formPayload,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            ...AxiosHeader, // include auth headers if needed
-          },
-        }
-      );
-
-      console.log("Form submitted:", response.data);
-      setSubmitSuccess(true);
-    } catch (error) {
-      console.error(error);
-      ErrorToast(error.response?.data?.message || "Submission failed");
-    } finally {
       setIsSubmitting(false);
-    }
+      setSubmitSuccess(true);
+    }, 2000);
   };
 
-  // ✅ Success Screen
   if (submitSuccess) {
     return (
       <div className="min-h-screen bg-gray-50 py-16 px-4">
@@ -202,7 +112,7 @@ const BecomeSellerPage = () => {
               Back to Home
             </a>
             <a
-              href="/dashboard"
+              href="/seller-dashboard"
               className="bg-white hover:bg-gray-100 text-green-600 font-bold py-2 px-6 rounded-lg border border-green-600 transition"
             >
               Seller Dashboard
@@ -282,16 +192,16 @@ const BecomeSellerPage = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label
-                    htmlFor="business_name"
+                    htmlFor="businessName"
                     className="block text-gray-700 font-medium mb-2"
                   >
                     Farm/Business Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="business_name"
-                    name="business_name"
-                    value={formData.business_name}
+                    id="businessName"
+                    name="businessName"
+                    value={formData.businessName}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
                     required
@@ -300,15 +210,15 @@ const BecomeSellerPage = () => {
 
                 <div>
                   <label
-                    htmlFor="business_type"
+                    htmlFor="businessType"
                     className="block text-gray-700 font-medium mb-2"
                   >
                     Business Type <span className="text-red-500">*</span>
                   </label>
                   <select
-                    id="business_type"
-                    name="business_type"
-                    value={formData.business_type}
+                    id="businessType"
+                    name="businessType"
+                    value={formData.businessType}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
                     required
@@ -327,16 +237,16 @@ const BecomeSellerPage = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label
-                    htmlFor="first_name"
+                    htmlFor="firstName"
                     className="block text-gray-700 font-medium mb-2"
                   >
                     First Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="first_name"
-                    name="first_name"
-                    value={formData.first_name}
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
                     required
@@ -345,16 +255,16 @@ const BecomeSellerPage = () => {
 
                 <div>
                   <label
-                    htmlFor="last_name"
+                    htmlFor="lastName"
                     className="block text-gray-700 font-medium mb-2"
                   >
                     Last Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="last_name"
-                    name="last_name"
-                    value={formData.last_name}
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
                     required
@@ -402,16 +312,16 @@ const BecomeSellerPage = () => {
 
               <div>
                 <label
-                  htmlFor="business_address"
+                  htmlFor="businessAddress"
                   className="block text-gray-700 font-medium mb-2"
                 >
                   Business Address <span className="text-red-500">*</span>
                 </label>
                 <textarea
-                  id="business_address"
-                  name="business_address"
+                  id="businessAddress"
+                  name="businessAddress"
                   rows="3"
-                  value={formData.business_address}
+                  value={formData.businessAddress}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
                   required
@@ -437,41 +347,32 @@ const BecomeSellerPage = () => {
 
               <div>
                 <label
-                  htmlFor="types_of_fruits"
+                  htmlFor="fruitTypes"
                   className="block text-gray-700 font-medium mb-2"
                 >
                   Types of Fruits You Sell{" "}
                   <span className="text-red-500">*</span>
                 </label>
-
-                {loading ? (
-                  <p className="text-gray-500">Loading fruit types...</p>
-                ) : (
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {productTypes.map((type) => (
-                      <div key={type._id} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id={`fruit-${type._id}`}
-                          name="types_of_fruits"
-                          value={type._id}
-                          checked={formData.types_of_fruits.includes(type._id)}
-                          onChange={handleCheckboxChange}
-                          className="mr-2"
-                        />
-                        <label
-                          htmlFor={`fruit-${type._id}`}
-                          className="text-gray-700"
-                        >
-                          {type.name}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
+                <select
+                  id="fruitTypes"
+                  name="fruitTypes"
+                  multiple
+                  value={formData.fruitTypes}
+                  onChange={handleMultiSelect}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition h-auto min-h-[42px]"
+                  required
+                >
+                  <option value="apple">Apples</option>
+                  <option value="orange">Oranges</option>
+                  <option value="banana">Bananas</option>
+                  <option value="berry">Berries</option>
+                  <option value="melon">Melons</option>
+                  <option value="stone">Stone Fruits</option>
+                  <option value="tropical">Tropical Fruits</option>
+                  <option value="other">Other</option>
+                </select>
                 <p className="text-xs text-gray-500 mt-1">
-                  Select all fruit categories that apply
+                  Hold Ctrl/Cmd to select multiple
                 </p>
               </div>
 
@@ -481,27 +382,12 @@ const BecomeSellerPage = () => {
                 </label>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {[
-                    {
-                      id: "bcsir",
-                      label: "BCSIR Tested",
-                    },
-                    {
-                      id: "bsti",
-                      label: "BSTI Certified",
-                    },
-                    {
-                      id: "organic_bd",
-                      label: "Organic Certified",
-                    },
-                    {
-                      id: "halal",
-                      label: "Halal Certified",
-                    },
-                    { id: "gap", label: "Good Agricultural Practices (GAP)" },
-                    {
-                      id: "local",
-                      label: "Locally Grown",
-                    },
+                    { id: "organic", label: "Organic Certified" },
+                    { id: "usda", label: "USDA Certified" },
+                    { id: "fairtrade", label: "Fair Trade" },
+                    { id: "nonGmo", label: "Non-GMO" },
+                    { id: "local", label: "Locally Grown" },
+                    { id: "none", label: "None of these" },
                   ].map((cert) => (
                     <div key={cert.id} className="flex items-center">
                       <input
@@ -521,16 +407,16 @@ const BecomeSellerPage = () => {
 
               <div>
                 <label
-                  htmlFor="business_description"
+                  htmlFor="businessDesc"
                   className="block text-gray-700 font-medium mb-2"
                 >
                   Business Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
-                  id="business_description"
-                  name="business_description"
+                  id="businessDesc"
+                  name="businessDesc"
                   rows="4"
-                  value={formData.business_description}
+                  value={formData.businessDesc}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
                   placeholder="Tell us about your farm and products"
@@ -560,7 +446,9 @@ const BecomeSellerPage = () => {
           {/* Step 3: Documents */}
           {currentStep === 3 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-semibold mb-6">Documents</h2>
+              <h2 className="text-2xl font-semibold mb-6">
+                Documents & Agreement
+              </h2>
 
               <div>
                 <label className="block text-gray-700 font-medium mb-2">
@@ -606,6 +494,32 @@ const BecomeSellerPage = () => {
                 </p>
               </div>
 
+              <div className="mt-6">
+                <div className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    name="termsAgreed"
+                    checked={formData.termsAgreed}
+                    onChange={handleChange}
+                    className="mt-1 mr-2"
+                    required
+                  />
+                  <label htmlFor="terms" className="text-sm text-gray-600">
+                    I agree to the{" "}
+                    <a href="#" className="text-green-600 hover:underline">
+                      Terms of Service
+                    </a>{" "}
+                    and{" "}
+                    <a href="#" className="text-green-600 hover:underline">
+                      Seller Agreement
+                    </a>
+                    . I understand that my application will be reviewed and
+                    approval is subject to verification.
+                  </label>
+                </div>
+              </div>
+
               <div className="flex justify-between">
                 <button
                   type="button"
@@ -638,10 +552,10 @@ const BecomeSellerPage = () => {
                         <path
                           className="opacity-75"
                           fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      Submitting...
+                      Processing...
                     </>
                   ) : (
                     "Submit Application"

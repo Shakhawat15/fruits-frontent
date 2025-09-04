@@ -18,15 +18,12 @@ export default function AddUser({ existingUser, onCancel }) {
   const phoneRef = useRef(null);
   const passwordRef = useRef(null);
   const profilePhotoRef = useRef(null);
-  const districtRef = useRef(null);
 
   const [roles, setRoles] = useState([]);
-  const [districts, setDistricts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [selectedRole, setSelectedRole] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -45,25 +42,8 @@ export default function AddUser({ existingUser, onCancel }) {
   }, []);
 
   useEffect(() => {
-    const fetchDistricts = async () => {
-      try {
-        const response = await axios.get(
-          `${baseURL}/districts/all`,
-          AxiosHeader
-        );
-        setDistricts(response.data.data);
-      } catch (error) {
-        ErrorToast("Failed to fetch districts");
-      }
-    };
-
-    fetchDistricts();
-  }, []);
-
-  useEffect(() => {
     if (existingUser) {
       setSelectedRole(existingUser.role_id || "");
-      setSelectedDistrict(existingUser.district || "");
 
       if (existingUser.avatar) {
         setLogoPreview(`${existingUser.avatar}`);
@@ -75,7 +55,6 @@ export default function AddUser({ existingUser, onCancel }) {
     event.preventDefault();
 
     const role = selectedRole;
-    const district = selectedDistrict;
     const full_name = firstNameRef.current.value;
     const email = emailRef.current.value;
     const phone = phoneRef.current.value;
@@ -88,7 +67,6 @@ export default function AddUser({ existingUser, onCancel }) {
 
     if (IsEmpty(role)) newErrors.role = "Role is required!";
     if (IsEmpty(full_name)) newErrors.full_name = "First Name is required!";
-    if (IsEmpty(district)) newErrors.district = "District is required!";
     if (IsEmpty(email)) newErrors.email = "Valid Email is required!";
     if (IsEmpty(phone)) newErrors.phone = "Valid Phone is required!";
     if (!existingUser) {
@@ -103,7 +81,6 @@ export default function AddUser({ existingUser, onCancel }) {
     const formData = new FormData();
     formData.append("role_id", role);
     formData.append("full_name", full_name);
-    formData.append("district", district);
     formData.append("email", email);
     formData.append("mobile", phone);
     formData.append("password", password);
@@ -157,10 +134,6 @@ export default function AddUser({ existingUser, onCancel }) {
     setSelectedRole(event.target.value);
   };
 
-  const handleDistrictChange = (event) => {
-    setSelectedDistrict(event.target.value);
-  };
-
   return (
     <Dialog
       size="md"
@@ -179,35 +152,6 @@ export default function AddUser({ existingUser, onCancel }) {
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
           onSubmit={handleSubmit}
         >
-          <div className="col-span-1">
-            <label
-              htmlFor="district"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              District
-            </label>
-            <select
-              ref={districtRef}
-              id="district"
-              name="district"
-              value={selectedDistrict} // Controlled select input
-              onChange={handleDistrictChange} // Handle changes
-              className={`w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                errors.district ? "border-red-500" : ""
-              }`}
-            >
-              <option value="">Select District</option>
-              {districts.map((district) => (
-                <option key={district._id} value={district._id}>
-                  {district.name}
-                </option>
-              ))}
-            </select>
-            {errors.district && (
-              <p className="text-red-500 text-xs mt-1">{errors.district}</p>
-            )}
-          </div>
-
           <div className="col-span-1">
             <label
               htmlFor="firstName"
