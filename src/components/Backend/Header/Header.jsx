@@ -9,7 +9,6 @@ import {
 } from "@material-tailwind/react";
 import { MenuOutlined } from "@mui/icons-material";
 import PropTypes from "prop-types";
-import { useState } from "react";
 import { imageBaseURL } from "../../../API/config";
 import { getUser, removeSession } from "../../../helper/SessionHelper";
 
@@ -17,35 +16,26 @@ const Header = ({ toggleSidebar }) => {
   const user = getUser();
 
   const handleLogout = () => {
-    // Clear user session
     removeSession();
-  };
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleToggle = () => {
-    setIsMenuOpen(!isMenuOpen);
-    toggleSidebar(!isMenuOpen);
   };
 
   return (
     <header className="py-2 px-4 shadow-md bg-white w-full flex items-center justify-between z-10 sticky top-0">
       <div className="flex items-center space-x-3">
+        {/* Toggle always visible so you can collapse/expand on any screen size */}
         <Button
-          onClick={handleToggle}
+          onClick={toggleSidebar}
           className="p-2 rounded-lg bg-blue-gray-100 hover:bg-blue-gray-200 transition-all"
           variant="text"
         >
           <MenuOutlined className="h-6 w-6 text-gray-700" />
         </Button>
-        {!isMenuOpen && (
-          <Typography color="gray" variant="h6">
-            {user?.name || "Admin"}
-          </Typography>
-        )}
+        <Typography color="gray" variant="h6">
+          {user?.name || "Admin"}
+        </Typography>
       </div>
 
-      {/* User Profile Section */}
+      {/* User Profile */}
       <div className="flex items-center space-x-2">
         <Menu>
           <MenuHandler>

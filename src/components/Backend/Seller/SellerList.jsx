@@ -24,6 +24,7 @@ import { ErrorToast, SuccessToast } from "../../../helper/FormHelper";
 import LazyLoader from "../BackendMasterLayout/LazyLoader";
 import Loader from "../BackendMasterLayout/Loader";
 import AddSeller from "./AddSeller";
+import SellerDetails from "./SellerDetails";
 
 const TABLE_HEAD = [
   "S.No",
@@ -43,6 +44,8 @@ export default function SellerList() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [openDetailsModal, setOpenDetailsModal] = useState(false);
+  const [detailsSeller, setDetailsSeller] = useState(null);
 
   useEffect(() => {
     fetchSellers();
@@ -118,6 +121,16 @@ export default function SellerList() {
     } catch (error) {
       ErrorToast("Failed to update status");
     }
+  };
+
+  const handleOpenDetails = (seller) => {
+    setDetailsSeller(seller);
+    setOpenDetailsModal(true);
+  };
+
+  const handleCloseDetails = () => {
+    setDetailsSeller(null);
+    setOpenDetailsModal(false);
   };
 
   return (
@@ -200,6 +213,12 @@ export default function SellerList() {
                         is_active,
                         createdAt,
                         _id,
+                        business_type,
+                        business_address,
+                        business_description,
+                        types_of_fruits,
+                        certifications,
+                        documents,
                       },
                       index
                     ) => {
@@ -276,7 +295,33 @@ export default function SellerList() {
                           </td>
                           <td className={classes}>
                             <div className="flex gap-2">
-                              <Tooltip content="Edit Seller">
+                              <Tooltip content="View Details">
+                                <IconButton
+                                  onClick={() =>
+                                    handleOpenDetails({
+                                      _id,
+                                      business_name,
+                                      first_name,
+                                      last_name,
+                                      email,
+                                      phone,
+                                      is_active,
+                                      createdAt,
+                                      business_type,
+                                      business_address,
+                                      business_description,
+                                      types_of_fruits,
+                                      certifications,
+                                      documents,
+                                    })
+                                  }
+                                  variant="text"
+                                  color="blue"
+                                >
+                                  <MagnifyingGlassIcon className="h-5 w-5" />
+                                </IconButton>
+                              </Tooltip>
+                              {/* <Tooltip content="Edit Seller">
                                 <IconButton
                                   onClick={() =>
                                     handleEditSeller({
@@ -294,7 +339,7 @@ export default function SellerList() {
                                 >
                                   <PencilIcon className="h-5 w-5" />
                                 </IconButton>
-                              </Tooltip>
+                              </Tooltip> */}
                               <Tooltip content="Delete Seller">
                                 <IconButton
                                   onClick={() => handleDeleteSeller(_id)}
@@ -341,6 +386,10 @@ export default function SellerList() {
           </div>
         </CardFooter>
       </Card>
+      {openDetailsModal && (
+        <SellerDetails seller={detailsSeller} onClose={handleCloseDetails} />
+      )}
+
       {openModal && (
         <Suspense fallback={<LazyLoader />}>
           <AddSeller

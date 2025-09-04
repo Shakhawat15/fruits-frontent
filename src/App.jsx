@@ -14,6 +14,8 @@ import UserList from "./pages/Backend/User/UserPage";
 import UserRoleList from "./pages/Backend/UserRole/UserRolePage";
 import ProductTypePage from "./pages/Backend/ProductType/ProductTypePage";
 import SellerPage from "./pages/Backend/Seller/SellerPage";
+import ProductBackendPage from "./pages/Backend/Product/ProductPage";
+import OrderPage from "./pages/Backend/Order/OrderPage";
 
 // Import Frontend Pages
 import BecomeSellerPage from "./pages/Frontend/BecomeSeller/BecomeSellerPage";
@@ -21,6 +23,7 @@ import CartPage from "./pages/Frontend/Cart/CartPage";
 import CheckoutPage from "./pages/Frontend/Checkout/CheckoutPage";
 import HomePage from "./pages/Frontend/Home/HomePage";
 import ProductPage from "./pages/Frontend/Product/ProductPage";
+import ThankYouPage from "./pages/Frontend/ThankYou/ThankYouPage";
 
 function App() {
   if (getToken()) {
@@ -33,12 +36,15 @@ function App() {
             <Route path="/products" element={<ProductPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
             <Route path="*" element={<HomePage />} />
             <Route exact path="/dashboard" element={<Dashboard />} />
             <Route path="/users" element={<UserList />} />
             <Route path="/user-roles" element={<UserRoleList />} />
             <Route path="/product-types" element={<ProductTypePage />} />
             <Route path="/seller-list" element={<SellerPage />} />
+            <Route path="/products-list" element={<ProductBackendPage />} />
+            <Route path="/order-list" element={<OrderPage />} />
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
           <ToastContainer />
@@ -58,6 +64,7 @@ function App() {
             <Route path="*" element={<HomePage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
           </Routes>
           <ToastContainer />
         </BrowserRouter>

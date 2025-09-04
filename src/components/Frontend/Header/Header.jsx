@@ -14,6 +14,24 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef(null);
+  const [cartCount, setCartCount] = useState(0);
+
+  // Update cart count from sessionStorage
+  const updateCartCount = () => {
+    const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+    const totalItems = cart.length; // Number of unique items
+    setCartCount(totalItems);
+  };
+
+  useEffect(() => {
+    updateCartCount();
+
+    // Optional: Listen to storage changes in case multiple tabs are open
+    const handleStorageChange = () => updateCartCount();
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const handleLogout = () => {
     setProfileMenuOpen(false);
@@ -25,7 +43,10 @@ export default function Header() {
   // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
         setProfileMenuOpen(false);
       }
     };
@@ -96,7 +117,9 @@ export default function Header() {
                       onClick={() => setProfileMenuOpen(false)}
                       className={({ isActive }) =>
                         `block px-4 py-2 ${
-                          isActive ? "bg-gray-100 text-green-600" : "text-gray-700"
+                          isActive
+                            ? "bg-gray-100 text-green-600"
+                            : "text-gray-700"
                         } hover:bg-gray-100`
                       }
                     >
@@ -123,7 +146,7 @@ export default function Header() {
                 >
                   Login
                 </NavLink>
-                <NavLink
+                {/* <NavLink
                   to="/register"
                   className={({ isActive }) =>
                     `border-b-2 ${
@@ -132,7 +155,7 @@ export default function Header() {
                   }
                 >
                   Register
-                </NavLink>
+                </NavLink> */}
               </>
             )}
 
@@ -143,7 +166,7 @@ export default function Header() {
               >
                 <FaShoppingCart className="text-xl" />
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs">
-                  3
+                  {cartCount}
                 </span>
               </NavLink>
             </div>
@@ -209,7 +232,9 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
                     `block ${
-                      isActive ? "text-green-600 font-semibold" : "text-gray-700"
+                      isActive
+                        ? "text-green-600 font-semibold"
+                        : "text-gray-700"
                     }`
                   }
                 >
@@ -232,7 +257,9 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
                     `block ${
-                      isActive ? "text-green-600 font-semibold" : "text-gray-700"
+                      isActive
+                        ? "text-green-600 font-semibold"
+                        : "text-gray-700"
                     }`
                   }
                 >
@@ -243,7 +270,9 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
                     `block ${
-                      isActive ? "text-green-600 font-semibold" : "text-gray-700"
+                      isActive
+                        ? "text-green-600 font-semibold"
+                        : "text-gray-700"
                     }`
                   }
                 >
