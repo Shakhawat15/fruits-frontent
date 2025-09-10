@@ -72,6 +72,7 @@ export default function MasterLayout({ children }) {
 
   // Menu items for Seller
   const sellerMenu = [
+    { name: "Dashboard", icon: "dashboard", path: "/dashboard" },
     { name: "Add Product", icon: ShoppingBagIcon, path: "/products-list" },
     { name: "Orders", icon: InboxIcon, path: "/order-list" },
   ];

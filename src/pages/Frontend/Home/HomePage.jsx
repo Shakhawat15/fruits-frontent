@@ -306,7 +306,7 @@ const ProductCard = ({ product }) => {
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-bold text-lg mb-1">{product.name}</h3>
+        <h3 className="font-bold text-lg mb-1">{product.title}</h3>
         <p className="text-gray-600 text-sm mb-2">Farm: {product.farm}</p>
         <div className="flex items-center mb-2">
           <div className="flex">{renderStars()}</div>
