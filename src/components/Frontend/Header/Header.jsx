@@ -64,7 +64,7 @@ export default function Header() {
               className="text-2xl font-bold text-green-600 flex items-center"
             >
               <FaLeaf className="mr-2" />
-              <span>SeasonalFruits</span>
+              <span>Farm2Home</span>
             </NavLink>
           </div>
 

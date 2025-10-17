@@ -1,4 +1,9 @@
-import { FaFacebookF, FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaLinkedin,
+  FaTwitter,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -9,7 +14,9 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-bold mb-4">About Us</h3>
             <p className="text-sm">
-              SeasonalFruits is dedicated to providing the freshest seasonal fruits directly from local farms to your table. Join us in supporting sustainable agriculture and enjoying nature&apos;s bounty.
+              Farm2Home is dedicated to providing the freshest seasonal fruits
+              directly from local farms to your table. Join us in supporting
+              sustainable agriculture and enjoying nature&apos;s bounty.
             </p>
           </div>
 
@@ -18,19 +25,29 @@ const Footer = () => {
             <h3 className="text-lg font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="hover:underline">Home</a>
+                <a href="/" className="hover:underline">
+                  Home
+                </a>
               </li>
               <li>
-                <a href="#products" className="hover:underline">Products</a>
+                <a href="#products" className="hover:underline">
+                  Products
+                </a>
               </li>
               <li>
-                <a href="/become-seller" className="hover:underline">Become a Seller</a>
+                <a href="/become-seller" className="hover:underline">
+                  Become a Seller
+                </a>
               </li>
               <li>
-                <a href="/login" className="hover:underline">Login</a>
+                <a href="/login" className="hover:underline">
+                  Login
+                </a>
               </li>
               <li>
-                <a href="/register" className="hover:underline">Register</a>
+                <a href="/register" className="hover:underline">
+                  Register
+                </a>
               </li>
             </ul>
           </div>
@@ -38,7 +55,7 @@ const Footer = () => {
           {/* Contact Section */}
           <div>
             <h3 className="text-lg font-bold mb-4">Contact Us</h3>
-            <p className="text-sm">Email: support@seasonalfruits.com</p>
+            <p className="text-sm">Email: support@farm2home.com</p>
             <p className="text-sm">Phone: +1 (234) 567-8901</p>
             <div className="mt-4">
               <h4 className="font-bold">Follow Us</h4>
@@ -62,7 +79,9 @@ const Footer = () => {
 
         {/* Newsletter Subscription */}
         <div className="mt-8">
-          <h3 className="text-lg font-bold mb-4">Subscribe to Our Newsletter</h3>
+          <h3 className="text-lg font-bold mb-4">
+            Subscribe to Our Newsletter
+          </h3>
           <form className="flex flex-col sm:flex-row">
             <input
               type="email"
@@ -81,7 +100,9 @@ const Footer = () => {
       </div>
 
       <div className="bg-green-700 text-center py-4 mt-8">
-        <p className="text-sm">&copy; {new Date().getFullYear()} SeasonalFruits. All rights reserved.</p>
+        <p className="text-sm">
+          &copy; {new Date().getFullYear()} SeasonalFruits. All rights reserved.
+        </p>
       </div>
     </footer>
   );
