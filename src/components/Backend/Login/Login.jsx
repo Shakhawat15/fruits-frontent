@@ -18,7 +18,7 @@ const Login = () => {
     if (IsEmail(email)) {
       ErrorToast("Valid Email Address is Required!");
       return; // Exit if email is invalid
-    } 
+    }
     if (IsEmpty(password)) {
       ErrorToast("Password is Required!");
       return; // Exit if password is empty
@@ -42,7 +42,7 @@ const Login = () => {
       ) : (
         <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl">
           <h1 className="text-4xl font-extrabold text-center text-green-600 mb-4">
-            SeasonalFruits
+            Farm2Home
           </h1>
           <form onSubmit={SubmitLogin}>
             <div className="mb-6">
